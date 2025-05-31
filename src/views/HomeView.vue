@@ -1,104 +1,6 @@
-<template>
-  <div class="min-h-screen p-8">
-    <div class="max-w-4xl mx-auto">
-      <h1 class="text-3xl font-bold text-center mb-8">Video Captcha</h1>
-      
-      <!-- Video Selection -->
-      <div v-if="!selectedVideo" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div 
-          v-for="video in videos" 
-          :key="video.id"
-          @click="selectVideo(video)"
-          class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-        >
-          <div class="relative aspect-video bg-gray-200">
-            <video :src="video.src" class="w-full h-full object-cover" preload="metadata" muted />
-            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <Play class="w-12 h-12 text-white" />
-            </div>
-          </div>
-          <div class="p-4 text-black">
-            <h3 class="font-semibold">{{ video.title }}</h3>
-            <p class="text-sm text-gray-600">{{ video.description }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Video Player & Captcha -->
-      <div v-else class="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div class="p-4 border-b">
-          <button @click="goBack" class="text-blue-600 hover:text-blue-800">
-            ← Back to videos
-          </button>
-        </div>
-
-        <!-- Video -->
-        <div v-if="!showForm" class="relative aspect-video bg-black">
-          <video 
-            ref="videoRef"
-            :src="selectedVideo.src"
-            class="w-full h-full"
-            @ended="showCaptchaForm"
-            @click="playVideo"
-            controls
-          />
-        </div>
-
-        <!-- Form -->
-        <div v-else class="p-8">
-          <div v-if="loading" class="text-center">
-            <div class="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p>Checking your answer...</p>
-          </div>
-
-          <div v-else-if="result" class="text-center">
-            <div class="mb-4">
-              <CheckCircle v-if="result.success" class="w-16 h-16 text-green-500 mx-auto" />
-              <XCircle v-else class="w-16 h-16 text-red-500 mx-auto" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">
-              {{ result.success ? 'Correct!' : 'Try Again' }}
-            </h3>
-            <p class="text-gray-600 mb-4">{{ result.message }}</p>
-            <button 
-              @click="reset"
-              class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-            >
-              {{ result.success ? 'Next Video' : 'Retry' }}
-            </button>
-          </div>
-
-          <div v-else>
-            <h3 class="text-xl font-semibold mb-4">What did you see in the video?</h3>
-            <textarea 
-              v-model="userInput"
-              placeholder="Describe what you saw..."
-              class="w-full h-32 p-3 border rounded-lg resize-none"
-            ></textarea>
-            <div class="flex gap-3 mt-4">
-              <button 
-                @click="submitAnswer"
-                :disabled="!userInput.trim()"
-                class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
-              >
-                Submit
-              </button>
-              <button 
-                @click="reset"
-                class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
-              >
-                Skip
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
+import { NCard, NButton, NInput, NSpin, NImage, N } from 'naive-ui'
 import { Play, CheckCircle, XCircle } from 'lucide-vue-next'
 
 interface Video {
@@ -118,25 +20,21 @@ const videos: Video[] = [
   {
     id: 1,
     title: 'Nike',
-    description: 'nike shoes advert',
+    description: 'Nike shoes ad',
     src: '/videos/nike.mp4',
-    keywords: ['beach', 'waves', 'ocean', 'sand']
+    keywords: ['nike', 'sneakers', 'white socks', 'concrete stairs', 'low angle shot', 'movement', 'urban environment', 'cityscape', 'step-by-step progression', 'footwear', 'transition']
   },
   {
     id: 2,
     title: 'Tiger',
-    description: 'cool tiger video',
+    description: 'Tiger video',
     src: '/videos/tiger.mp4',
-    keywords: ['city', 'street', 'buildings', 'urban']
+    keywords: ['tiger', 'walking', 'forest', 'path', 'orange', 'black stripes', 'green foliage', 'brown earth', 'natural habitat', 'wildlife', 'movement', 'paw prints', 'tail', 'focus', 'camera', 'environment', 'wild', 'safari', 'jungle', 'predator']
   },
-  {
-    id: 3,
-    title: 'Nike Again',
-    description: 'nike againnnn',
-    src: '/videos/nike.mp4',
-    keywords: ['forest', 'trees', 'nature', 'green']
-  }
 ]
+
+const langflowOnline = "http://localhost:8010/proxy/lf/71205138-5f00-4290-9d3d-a76f01eb19c9/api/v1/run/4e33cd6e-0177-4412-ae84-22949648c523"
+const langflowUrl = "http://localhost:7868/api/v1/run/314b9422-1529-48d7-9ba4-6115e287b156"
 
 const selectedVideo = ref<Video | null>(null)
 const showForm = ref(false)
@@ -169,38 +67,176 @@ const showCaptchaForm = () => {
   showForm.value = true
 }
 
-const submitAnswer = async () => {
+const submitAnswer = () => {
   if (!userInput.value.trim() || !selectedVideo.value) return
   
   loading.value = true
   
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 2000))
-  
-  const input = userInput.value.toLowerCase()
-  const keywords = selectedVideo.value.keywords
-  const hasMatch = keywords.some(keyword => input.includes(keyword))
-  
-  result.value = {
-    success: hasMatch,
-    message: hasMatch 
-      ? 'Great! You correctly identified the content.'
-      : 'Not quite right. Try again or skip to the next video.'
-  }
-  
-  loading.value = false
+  // split the user input by spaces into an array of keywords in the format ['keyword1', 'keyword2', ...]
+  const inputKeywords = userInput.value.trim().toLowerCase().split(/\s+/);
+
+  const inputString = `user input:
+{0}
+
+computer analysis:
+{1}`.replace('{0}', JSON.stringify(inputKeywords)).replace('{1}', JSON.stringify(selectedVideo.value.keywords));
+
+
+  const payload = {
+      "input_value": inputString,
+      "output_type": "chat",
+      "input_type": "chat",
+      "session_id": "test vue session",
+  };
+
+  const options = {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload)
+  };
+
+
+  fetch('http://localhost:7868/api/v1/run/314b9422-1529-48d7-9ba4-6115e287b156'
+    ,options)
+    .then(response => {
+      return response.json()
+    })
+    .then(response => {
+      console.log(response)
+      console.log(response.outputs[0].outputs[0].results.message.text)
+      var finalResponse = response.outputs[0].outputs[0].results.message.text
+      result.value = {
+        success: true,
+        message: finalResponse 
+      }
+      
+      loading.value = false
+    })
+    .catch(err => {
+      console.error(err)
+    });
 }
 
-const reset = () => {
-  if (result.value?.success) {
-    goBack() // Go back to video selection on success
-  } else {
-    // Reset for retry
-    result.value = null
-    userInput.value = ''
-  }
-}
 </script>
+
+<template>
+  <div class="min-h-screen p-8 bg-stone-800">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold text-left text-white">Why</h1>
+      <br/>
+      <li>Captchas are too easy nowadays.</li>
+      <li>How can I be sure you're not a bot? 🤔</li>
+      <li>Value screen real estate can be further monitized.</li>
+      <li>More money for everyone (except the user)!</li>
+      <br/>
+      <div><n-image  
+            class="mb-8"
+            src="videos/oldcap.png"
+            width="500" />
+            </div>
+      <h1 class="text-3xl font-bold text-left text-white">Human, Please</h1>
+
+      <br/>
+      <p>Now you can show ads while your audience is held captive!</p>
+      <br/>
+      
+      <!-- Video Selection -->
+      <div v-if="!selectedVideo" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div 
+          v-for="video in videos" 
+          :key="video.id"
+          @click="selectVideo(video)"
+          class="bg-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
+        >
+          <div class="relative aspect-video bg-gray-200">
+            <video :src="video.src" class="w-full h-full object-cover" preload="metadata" muted />
+            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <Play class="w-12 h-12 text-white" />
+            </div>
+          </div>
+          <div class="p-4 text-black">
+            <h3 class="font-semibold">{{ video.title }}</h3>
+            <p class="text-sm text-gray-600">{{ video.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Player & Captcha -->
+      <n-card v-else size="large" style="background-color:#292524;" class="mb-8">
+        <n-button type="info" @click="goBack" class="hover:text-blue-800 mb-4" round>
+          ← Back
+        </n-button>
+
+        <!-- Video -->
+        <div class="relative aspect-video bg-black mb-4">
+          <video 
+            ref="videoRef"
+            :src="selectedVideo.src"
+            class="w-full h-full"
+            @ended="showCaptchaForm"
+            @click="playVideo"
+            controls
+          />
+        </div>
+
+        <!-- Form -->
+          <div v-if="loading" class="text-center">
+            <p>Are you human...</p>
+            <n-spin size="large"/>
+          </div>
+
+          <div v-else-if="result" class="text-center">
+            <div class="mb-4">
+              <CheckCircle v-if="result.success" class="w-16 h-16 text-green-500 mx-auto" />
+              <XCircle v-else class="w-16 h-16 text-red-500 mx-auto" />
+            </div>
+            <h3 class="text-white text-xl font-semibold mb-4">
+              {{ result.success ? 'Not a bot!' : 'Very bot' }}
+            </h3>
+            <p class="text-gray-200 mb-4">{{ result.message }}</p>
+          </div>
+
+          <div v-else>
+            <h3 class="text-xl font-semibold mb-4 text-white">Describe the video in a couple of words</h3>
+            <n-spin :show="loading">
+              <n-input 
+                v-model:value="userInput"
+                type="textarea"
+                placeholder="Keywords"
+                style="background-color:#e7e5e4; color:white;"
+                class="bg-gray-100 text-white"
+              />
+            </n-spin>
+            <div class="flex gap-3 mt-4">
+              <n-button 
+                @click="submitAnswer"
+                type="success"
+                :disabled="!userInput.trim()"
+              >
+                Submit
+              </n-button>
+            </div>
+          </div>
+      </n-card>
+
+      <h1 class="text-3xl font-bold text-left text-white">How it works</h1>
+      <br/>
+      <p class="mb-8">AI and Image processing, wow!</p>
+        <div><n-image  
+        class="mb-8"
+        src="videos/langflow.png"
+        width="500" />
+        </div>
+        <div><n-image  
+        class="mb-8"
+        src="videos/pegasus.png"
+        width="500" />
+        </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 /* Base layout */

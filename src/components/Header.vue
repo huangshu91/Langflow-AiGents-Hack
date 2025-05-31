@@ -9,39 +9,6 @@
         </div>
         <span class="brand-name">Human, Please</span>
       </div>
-
-      <!-- Navigation -->
-      <nav class="nav-links">
-        <a href="#">Docs</a>
-        <div class="nav-item">
-          <span>Resources</span>
-          <ChevronDown class="icon" />
-        </div>
-        <div class="nav-item">
-          <span>Community</span>
-          <ChevronDown class="icon" />
-        </div>
-      </nav>
-    </div>
-
-    <!-- Right section: Stats -->
-    <div class="right-section">
-      <div class="stat-item">
-        <Github class="icon" />
-        <span>62k</span>
-      </div>
-      <div class="stat-item">
-        <MessageCircle class="icon" />
-        <span>12k</span>
-      </div>
-      <div class="stat-item">
-        <Twitter class="icon" />
-        <span>8k</span>
-      </div>
-      <div class="stat-item">
-        <Youtube class="icon" />
-        <span>6k</span>
-      </div>
     </div>
   </header>
 </template>
