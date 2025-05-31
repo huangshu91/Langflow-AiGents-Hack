@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-8">
+  <div class="min-h-screen p-8">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-3xl font-bold text-center mb-8">Video Captcha</h1>
       
@@ -17,7 +17,7 @@
               <Play class="w-12 h-12 text-white" />
             </div>
           </div>
-          <div class="p-4">
+          <div class="p-4 text-black">
             <h3 class="font-semibold">{{ video.title }}</h3>
             <p class="text-sm text-gray-600">{{ video.description }}</p>
           </div>
@@ -201,3 +201,252 @@ const reset = () => {
   }
 }
 </script>
+
+<style scoped>
+/* Base layout */
+.min-h-screen {
+  min-height: 100vh;
+}
+.bg-gray-50 {
+  background-color: #f9fafb;
+}
+.p-8 {
+  padding: 2rem;
+}
+.max-w-4xl {
+  max-width: 56rem;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Typography */
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+.font-bold {
+  font-weight: 700;
+}
+.text-center {
+  text-align: center;
+}
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+}
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+.md\:grid-cols-2 {
+  /* fallback, override with media query */
+}
+.lg\:grid-cols-3 {
+  /* fallback, override with media query */
+}
+.gap-6 {
+  gap: 1.5rem;
+}
+
+/* Card styles */
+.bg-white {
+  background-color: white;
+}
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+.transition-shadow {
+  transition: box-shadow 0.2s;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* Video preview */
+.relative {
+  position: relative;
+}
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+.bg-gray-200 {
+  background-color: #e5e7eb;
+}
+.w-full {
+  width: 100%;
+}
+.h-full {
+  height: 100%;
+}
+.object-cover {
+  object-fit: cover;
+}
+.absolute {
+  position: absolute;
+}
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.flex {
+  display: flex;
+}
+.items-center {
+  align-items: center;
+}
+.justify-center {
+  justify-content: center;
+}
+/* Padding */
+.p-4 {
+  padding: 1rem;
+}
+.p-8 {
+  padding: 2rem;
+}
+
+/* Text content */
+.font-semibold {
+  font-weight: 600;
+}
+.text-sm {
+  font-size: 0.875rem;
+}
+.text-gray-600 {
+  color: #4b5563;
+}
+.text-black {
+  color: #080808;
+}
+.border-b {
+  border-bottom: 1px solid #e5e7eb;
+}
+.text-blue-600 {
+  color: #2563eb;
+}
+.hover\:text-blue-800:hover {
+  color: #1e40af;
+}
+
+/* Form states */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+.border {
+  border: 1px solid #d1d5db;
+}
+.border-4 {
+  border-width: 4px;
+}
+.border-t-transparent {
+  border-top-color: transparent;
+}
+.rounded-full {
+  border-radius: 9999px;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.text-xl {
+  font-size: 1.25rem;
+}
+.resize-none {
+  resize: none;
+}
+.h-32 {
+  height: 8rem;
+}
+.w-8 {
+  width: 2rem;
+}
+.h-8 {
+  height: 2rem;
+}
+.w-16 {
+  width: 4rem;
+}
+.h-16 {
+  height: 4rem;
+}
+
+/* Buttons */
+.bg-blue-600 {
+  background-color: #2563eb;
+}
+.bg-blue-700:hover {
+  background-color: #1d4ed8;
+}
+.text-white {
+  color: white;
+}
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.rounded {
+  border-radius: 0.25rem;
+}
+.disabled\:bg-gray-400:disabled {
+  background-color: #9ca3af;
+}
+.bg-gray-500 {
+  background-color: #6b7280;
+}
+.bg-gray-600:hover {
+  background-color: #4b5563;
+}
+
+/* Utility */
+.gap-3 {
+  gap: 0.75rem;
+}
+.mt-4 {
+  margin-top: 1rem;
+}
+
+/* Media queries */
+@media (min-width: 768px) {
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
